@@ -18,3 +18,16 @@
 ;(calc-shannon "1223334444")
 
 ;(calc-shannon "int main(int argc, char *argv[])")
+
+;; (to-hoffman "abc")
+
+(defn to-hoffman [text]
+  (let [x (vec (frequencies text))
+        y (sort (fn [a b] (> (second a) (second b))) x)
+        step (fn [[top & rest]] (if rest {:left (first top) :right (step rest)} {:left (first top) :right nil}))
+        z (step y)
+        walk (fn [path tree] (if (not (char? tree)) (when tree (conj (walk (conj path \1) (:right tree)) (walk (conj path \0) (:left tree)))) [tree (apply str path)]))
+        code (into {} (walk [] z))]
+        {:encoding (apply str (map #(get code %1) text))
+         :tree z
+         :paths code}))
