@@ -21,13 +21,21 @@
 
 ;; (to-hoffman "abc")
 
+(defn- 
+  build-tree 
+  [[top & rest]]
+  (if rest {:left (first top) :right (build-tree rest)} {:left (first top) :right nil}))
+
+(defn- 
+  annotate-with-paths
+  [path tree]
+  (if (not (char? tree)) (when tree (conj (annotate-with-paths (conj path \1) (:right tree)) (annotate-with-paths (conj path \0) (:left tree)))) [tree (apply str path)]))
+  
 (defn to-hoffman [text]
-  (let [x (vec (frequencies text))
-        y (sort (fn [a b] (> (second a) (second b))) x)
-        step (fn [[top & rest]] (if rest {:left (first top) :right (step rest)} {:left (first top) :right nil}))
-        z (step y)
-        walk (fn [path tree] (if (not (char? tree)) (when tree (conj (walk (conj path \1) (:right tree)) (walk (conj path \0) (:left tree)))) [tree (apply str path)]))
-        code (into {} (walk [] z))]
-        {:encoding (apply str (map #(get code %1) text))
-         :tree z
-         :paths code}))
+  (let [freq-of-chars (vec (frequencies text))
+        sorted-freq-of-chars (sort (fn [a b] (> (second a) (second b))) freq-of-chars)
+        tree (build-tree sorted-freq-of-chars)
+        char-to-path (into {} (annotate-with-paths [] tree))]
+        {:encoding (apply str (map #(get char-to-path %1) text))
+         :tree tree
+         :paths char-to-path}))
