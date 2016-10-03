@@ -8,4 +8,4 @@ https://www.reddit.com/r/dailyprogrammer/comments/4fc896/20160418_challenge_263_
 
 ## Subgroup 2
 
-Huffman tree for a string
+Not from reddit - just a related problem. Given a string, construct a Huffman tree for it. The tree is made using Huffman encoding, which is a type of optimal prefix code, where symbols frequencies are inversely proportional to the number of bits used to represent them. Eg. the most frequent element needs the fewest bit to send. Processing a string means measuring the frequencies for each symbol/character and sorting them according to frequency. 
